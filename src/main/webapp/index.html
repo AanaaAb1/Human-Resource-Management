@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRM System - Human Resource Management</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏢 HRM System</h1>
+            <div id="user-info" class="user-info" style="display: none;">
+                <span id="current-user"></span>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </header>
+
+        <!-- Login Section -->
+        <section id="login-section" class="section">
+            <div class="card">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p id="login-error" class="error-message"></p>
+                <div class="info-box">
+                    <strong>Demo Credentials:</strong><br>
+                    Username: <code>admin</code><br>
+                    Password: <code>admin123</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content (Hidden until logged in) -->
+        <main id="main-content" style="display: none;">
+            <!-- Navigation Tabs -->
+            <nav class="tabs">
+                <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
+                <button class="tab-btn" onclick="showTab('employees')">Employees</button>
+                <button class="tab-btn" onclick="showTab('departments')">Departments</button>
+                <button class="tab-btn" onclick="showTab('attendance')">Attendance</button>
+                <button class="tab-btn" onclick="showTab('leave')">Leave</button>
+                <button class="tab-btn" onclick="showTab('payroll')">Payroll</button>
+                <button class="tab-btn" onclick="showTab('reports')">Reports</button>
+            </nav>
+
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h2>Dashboard</h2>
+                    <div id="dashboard-stats" class="stats-grid">
+                        <!-- Stats will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Employees Tab -->
+            <section id="employees" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Employees</h2>
+                        <button class="btn btn-primary" onclick="showAddEmployeeForm()">Add Employee</button>
+                    </div>
+                    <div id="employee-form" class="form-container" style="display: none;">
+                        <h3 id="employee-form-title">Add Employee</h3>
+                        <form id="employee-form-element">
+                            <input type="hidden" id="employee-id">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emp-employee-id">Employee ID *</label>
+                                    <input type="text" id="emp-employee-id" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emp-full-name">Full Name *</label>
+                                    <input type="text" id="emp-full-name" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emp-email">Email *</label>
+                                    <input type="email" id="emp-email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emp-phone">Phone</label>
+                                    <input type="text" id="emp-phone">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emp-gender">Gender *</label>
+                                    <select id="emp-gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="MALE">Male</option>
+                                        <option value="FEMALE">Female</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emp-department">Department</label>
+                                    <select id="emp-department">
+                                        <option value="">Select Department</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emp-job-title">Job Title</label>
+                                    <input type="text" id="emp-job-title">
+                                </div>
+                                <div class="form-group">
+                                    <label for="emp-hire-date">Hire Date *</label>
+                                    <input type="date" id="emp-hire-date" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="emp-salary">Salary *</label>
+                                    <input type="number" id="emp-salary" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emp-address">Address</label>
+                                    <textarea id="emp-address" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideEmployeeForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Job Title</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employees-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Departments Tab -->
+            <section id="departments" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Departments</h2>
+                        <button class="btn btn-primary" onclick="showAddDepartmentForm()">Add Department</button>
+                    </div>
+                    <div id="department-form" class="form-container" style="display: none;">
+                        <h3 id="department-form-title">Add Department</h3>
+                        <form id="department-form-element">
+                            <input type="hidden" id="department-id">
+                            <div class="form-group">
+                                <label for="department-name">Name *</label>
+                                <input type="text" id="department-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="department-description">Description</label>
+                                <textarea id="department-description" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideDepartmentForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departments-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Tab -->
+            <section id="attendance" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Attendance</h2>
+                        <button class="btn btn-primary" onclick="showAddAttendanceForm()">Record Attendance</button>
+                    </div>
+                    <div id="attendance-form" class="form-container" style="display: none;">
+                        <h3>Record Attendance</h3>
+                        <form id="attendance-form-element">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="attendance-employee">Employee *</label>
+                                    <select id="attendance-employee" required>
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="attendance-date">Date *</label>
+                                    <input type="date" id="attendance-date" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="attendance-status">Status *</label>
+                                <select id="attendance-status" required>
+                                    <option value="PRESENT">Present</option>
+                                    <option value="ABSENT">Absent</option>
+                                    <option value="LEAVE">Leave</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideAttendanceForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leave Tab -->
+            <section id="leave" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Leave Management</h2>
+                        <button class="btn btn-primary" onclick="showAddLeaveForm()">Apply for Leave</button>
+                    </div>
+                    <div id="leave-form" class="form-container" style="display: none;">
+                        <h3>Apply for Leave</h3>
+                        <form id="leave-form-element">
+                            <input type="hidden" id="leave-id">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="leave-employee">Employee *</label>
+                                    <select id="leave-employee" required>
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="leave-type">Leave Type *</label>
+                                    <select id="leave-type" required>
+                                        <option value="ANNUAL">Annual</option>
+                                        <option value="SICK">Sick</option>
+                                        <option value="PERSONAL">Personal</option>
+                                        <option value="MATERNITY">Maternity</option>
+                                        <option value="PATERNITY">Paternity</option>
+                                        <option value="UNPAID">Unpaid</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="leave-start-date">Start Date *</label>
+                                    <input type="date" id="leave-start-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="leave-end-date">End Date *</label>
+                                    <input type="date" id="leave-end-date" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="leave-reason">Reason</label>
+                                <textarea id="leave-reason" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideLeaveForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Type</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leave-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payroll Tab -->
+            <section id="payroll" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Payroll</h2>
+                        <button class="btn btn-primary" onclick="showGeneratePayrollForm()">Generate Payroll</button>
+                    </div>
+                    <div id="payroll-form" class="form-container" style="display: none;">
+                        <h3>Generate Payroll</h3>
+                        <form id="payroll-form-element">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="payroll-employee">Employee *</label>
+                                    <select id="payroll-employee" required>
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="payroll-month">Month *</label>
+                                    <select id="payroll-month" required>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="payroll-year">Year *</label>
+                                    <input type="number" id="payroll-year" min="2000" max="2100" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="payroll-allowances">Allowances</label>
+                                    <input type="number" id="payroll-allowances" step="0.01">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="payroll-deductions">Deductions</label>
+                                <input type="number" id="payroll-deductions" step="0.01">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Generate</button>
+                                <button type="button" class="btn btn-secondary" onclick="hidePayrollForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Month/Year</th>
+                                    <th>Basic Salary</th>
+                                    <th>Allowances</th>
+                                    <th>Deductions</th>
+                                    <th>Net Salary</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payroll-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Tab -->
+            <section id="reports" class="tab-content">
+                <div class="card">
+                    <h2>Reports</h2>
+                    <div class="reports-grid">
+                        <div class="report-card" onclick="generateReport('employees')">
+                            <div class="report-icon">👥</div>
+                            <h3>Employee Report</h3>
+                            <p>View all employee details</p>
+                        </div>
+                        <div class="report-card" onclick="generateReport('attendance')">
+                            <div class="report-icon">📅</div>
+                            <h3>Attendance Report</h3>
+                            <p>View attendance statistics</p>
+                        </div>
+                        <div class="report-card" onclick="generateReport('leave')">
+                            <div class="report-icon">🏖️</div>
+                            <h3>Leave Report</h3>
+                            <p>View leave requests summary</p>
+                        </div>
+                        <div class="report-card" onclick="generateReport('payroll')">
+                            <div class="report-icon">💰</div>
+                            <h3>Payroll Report</h3>
+                            <p>View payroll summary</p>
+                        </div>
+                        <div class="report-card" onclick="generateReport('summary')">
+                            <div class="report-icon">📊</div>
+                            <h3>Summary</h3>
+                            <p>View system summary</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="report-output" class="card" style="display: none;">
+                    <h3>Report Output</h3>
+                    <pre id="report-content"></pre>
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+
